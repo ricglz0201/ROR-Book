@@ -1,5 +1,7 @@
 class User < ApplicationRecord
 
+  has_many :microposts, dependent: :destroy
+
   attr_accessor :remember_token, :activation_token, :reset_token,
                 :reset_sent_at
   before_save   :downcase_email
@@ -64,6 +66,10 @@ class User < ApplicationRecord
       return false
     end
     self.reset_sent_at + (60*60*2) < Time.zone.now
+  end
+
+  def feed
+    Micropost.where("user_id = ?", id)
   end
 
   private
